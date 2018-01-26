@@ -12,13 +12,20 @@ use think\Db;
 
 class Data extends Controller
 {
+    private $arr;
+
     public function index(){
+        // 初始化 11 选五数据集
+        $this->initArr();
+
         echo 1;
         $this->pk10();
         echo 2;
         $this->xyft();
         echo 3;
         $this->test();
+        echo 4;
+        $this->setSource();
     }
     private function pk10(){
         $re = file_get_contents('http://e.apiplus.net/newly.do?token=t15e58a225c64f432k&code=bjpk10&format=json');
@@ -209,10 +216,67 @@ class Data extends Controller
     }
 
 
-    private function I15()
+    // 执行 抓取数据
+    private function setSource()
     {
-
+        foreach ($this->arr as $k => $v) {
+            $this->$v['func']($v);
+        }
     }
+
+
+    /**
+     * 11 选五
+     * @author HomeGrace
+     * time 2018年1月26日
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function I15($v)
+    {
+        $re1 = $this->curlS($v['url'], $v['urlD']);
+        switch ($v['data']['type']) {
+            case 'json':
+                $re1 = json_decode($re1, true);
+                break;
+            default:
+                break;
+        }
+        if ($re1) {
+            switch ($v['data']['quZhi']) {
+                case 'arr':
+                    $re1  = $re1[0];
+                    break;
+                default:
+                    break;
+            }
+
+            $list =  Db::name('data')->field('expect')->where(['uid' => $v['data']['ziDun']['uid']])->order('id desc')->find();
+            if(empty($list) || $list['expect'] != $re1[$v['data']['ziDun']['expect']]){
+                $data = array(
+                    'uid'      => $v['data']['ziDun']['uid'],
+                    'expect'   => $re1[$v['data']['ziDun']['expect']],
+                    'opencode' => $re1[$v['data']['ziDun']['opencode']],
+                );
+                switch ($v['time']['type']) {
+                    case 'subStr':
+                        $data['opentime'] = substr($re1[$v['data']['ziDun']['opentime']], $v['time']['code'][0], $v['time']['code'][1]);
+                        break;
+                    default:
+                        break;
+                }
+                Db::name('data')->insert($data);
+                echo "ok";
+            }
+        }
+    }
+
+
+
+
+
+
 
 
 
@@ -256,4 +320,89 @@ class Data extends Controller
         curl_close($curl); // 关闭CURL会话
         return $tmpInfo; // 返回数据
     }
+
+
+    private function initArr() {
+        $this->arr = [
+            'GD11X5' => [
+                'url'  => 'https://3cp333.com/lottery/trendChart/lotteryOpenNum.do?lotCode=GD11X5',
+                'urlD' => [],
+                'func' => 'I15',
+                'time' => [
+                    'type' => 'subStr',
+                    'code' => [0, -3]
+                ],
+                'data' => [
+                    'type' => 'json',
+                    'quZhi'=> 'arr',
+                    'ziDun'=> [
+                        'uid'     => 2,
+                        'expect'  => 'qiHao',
+                        'opencode'=> 'haoMa',
+                        'opentime'=> 'endTime'
+                    ]
+                ]
+            ],
+            'SD11X5' => [
+                'url'  => 'https://3cp9.com/lottery/trendChart/lotteryOpenNum.do?lotCode=SD11X5',
+                'urlD' => [],
+                'func' => 'I15',
+                'time' => [
+                    'type' => 'subStr',
+                    'code' => [0, -3]
+                ],
+                'data' => [
+                    'type' => 'json',
+                    'quZhi'=> 'arr',
+                    'ziDun'=> [
+                        'uid'     => 3,
+                        'expect'  => 'qiHao',
+                        'opencode'=> 'haoMa',
+                        'opentime'=> 'endTime'
+                    ]
+                ]
+            ],
+            'JX11X5' => [
+                'url'  => 'https://3cp9.com/lottery/trendChart/lotteryOpenNum.do?lotCode=JX11X5',
+                'urlD' => [],
+                'func' => 'I15',
+                'time' => [
+                    'type' => 'subStr',
+                    'code' => [0, -3]
+                ],
+                'data' => [
+                    'type' => 'json',
+                    'quZhi'=> 'arr',
+                    'ziDun'=> [
+                        'uid'     => 4,
+                        'expect'  => 'qiHao',
+                        'opencode'=> 'haoMa',
+                        'opentime'=> 'endTime'
+                    ]
+                ]
+            ],
+            'SH11X5' => [
+                'url'  => 'https://3cp9.com/lottery/trendChart/lotteryOpenNum.do?lotCode=SH11X5',
+                'urlD' => [],
+                'func' => 'I15',
+                'time' => [
+                    'type' => 'subStr',
+                    'code' => [0, -3]
+                ],
+                'data' => [
+                    'type' => 'json',
+                    'quZhi'=> 'arr',
+                    'ziDun'=> [
+                        'uid'     => 5,
+                        'expect'  => 'qiHao',
+                        'opencode'=> 'haoMa',
+                        'opentime'=> 'endTime'
+                    ]
+                ]
+            ]
+        ];
+    }
+
+
+
 }

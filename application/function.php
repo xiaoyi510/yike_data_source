@@ -11,3 +11,8 @@
 
 // 为方便系统核心升级，二次开发中需要用到的公共函数请写在这个文件，不要去修改common.php文件
 
+function pr($var)
+{
+    $templat = PHP_SAPI !== 'cil' ? '<pre>%s</pre>' : "\n%s\n";
+    printf($templat, print_r($var, true));
+}
