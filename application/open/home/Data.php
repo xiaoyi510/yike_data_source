@@ -23,22 +23,24 @@ class Data extends Controller
         echo 2;
         $this->xyft();
         echo 3;
-        $this->test();
-        echo 4;
         $this->setSource();
+        echo 4;
+        $this->test();
     }
     private function pk10(){
         $re = file_get_contents('http://e.apiplus.net/newly.do?token=t15e58a225c64f432k&code=bjpk10&format=json');
         $re1 = json_decode($re, true);
-        $list =  Db::name('data')->field('expect')->where(['uid' => 1])->order('id desc')->find();
-        if(empty($list) || $list['expect'] != $re1['data'][0]['expect']){
-            $data = array(
-                'uid' => 1,
-                'expect' => $re1['data'][0]['expect'],
-                'opencode' => $re1['data'][0]['opencode'],
-                'opentime' => $re1['data'][0]['opentimestamp']
-            );
-            $r = Db::name('data')->insert($data);
+        if ($re1['data'][0]['opencode']) {
+            $list =  Db::name('data')->field('expect')->where(['uid' => 1])->order('id desc')->find();
+            if(empty($list) || $list['expect'] != $re1['data'][0]['expect']){
+                $data = array(
+                    'uid' => 1,
+                    'expect' => $re1['data'][0]['expect'],
+                    'opencode' => $re1['data'][0]['opencode'],
+                    'opentime' => $re1['data'][0]['opentimestamp']
+                );
+                $r = Db::name('data')->insert($data);
+            }
         }
     }
     private function xyft(){
@@ -336,7 +338,7 @@ class Data extends Controller
                     'type' => 'json',
                     'quZhi'=> 'arr',
                     'ziDun'=> [
-                        'uid'     => 2,
+                        'uid'     => 3,
                         'expect'  => 'qiHao',
                         'opencode'=> 'haoMa',
                         'opentime'=> 'endTime'
@@ -355,7 +357,7 @@ class Data extends Controller
                     'type' => 'json',
                     'quZhi'=> 'arr',
                     'ziDun'=> [
-                        'uid'     => 3,
+                        'uid'     => 4,
                         'expect'  => 'qiHao',
                         'opencode'=> 'haoMa',
                         'opentime'=> 'endTime'
@@ -374,7 +376,7 @@ class Data extends Controller
                     'type' => 'json',
                     'quZhi'=> 'arr',
                     'ziDun'=> [
-                        'uid'     => 4,
+                        'uid'     => 5,
                         'expect'  => 'qiHao',
                         'opencode'=> 'haoMa',
                         'opentime'=> 'endTime'
@@ -393,7 +395,7 @@ class Data extends Controller
                     'type' => 'json',
                     'quZhi'=> 'arr',
                     'ziDun'=> [
-                        'uid'     => 5,
+                        'uid'     => 6,
                         'expect'  => 'qiHao',
                         'opencode'=> 'haoMa',
                         'opentime'=> 'endTime'
