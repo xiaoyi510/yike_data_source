@@ -22,6 +22,7 @@ class Data extends Controller
         $this->I15_gd(); //11选五
         $this->I15_jx(); //11选五
         $this->I15_sh(); //11选五
+        $this->I15_sd(); //11选五
         echo 4;
         $this->test();
     }
@@ -138,6 +139,27 @@ class Data extends Controller
                     'expect' => $da2,
                     'opencode' => $da1,
                     'opentime' => time()
+                );
+                $r = Db::name('data')->insert($data);
+            }
+        }
+    }
+
+    //山东11选五
+    private function I15_sd(){
+        $re = file_get_contents('https://pgkai.com/index.php?c=api2&a=getOthers&_=0.8742121351843366');
+        $re = json_decode($re, true);
+        $da1 = $re['list'][14]['c_r'];
+        $da2 = $re['list'][14]['c_t'];
+        $da3 = strtotime($re['list'][14]['c_d']);
+        if ($da1) {
+            $list =  Db::name('data')->field('expect')->where(['uid' => 6])->order('id desc')->find();
+            if(empty($list) || $list['expect'] != $da2){
+                $data = array(
+                    'uid' => 6,
+                    'expect' => $da2,
+                    'opencode' => $da1,
+                    'opentime' => $da3
                 );
                 $r = Db::name('data')->insert($data);
             }
@@ -323,30 +345,6 @@ class Data extends Controller
 //        }
     }
 
-    //山东11选五
-    public function I15_sd(){
-        $re = file_get_contents('https://www.ydniu.com/open/62.html');
-        var_dump($re);
-//        $r1 ='/<span style="width:140px">.*?<strong>(.*?)<\/strong><\/span>/ism';//取开奖号码
-//        $r2 ='/<td height="20" align="center" bgcolor="#FFFFFF">(.*?)<\/td>/ism';//取期数
-//        preg_match_all($r1, $re,$da1);
-//        preg_match_all($r2, $re,$da2);
-//        $da1 = trim($da1[1][11]);
-//        $da2 = trim($da2[1][11]);
-//        $da1 = explode('，',$da1);
-//        $da1 = implode(',', $da1);
-//        if ($da1) {
-//            $list =  Db::name('data')->field('expect')->where(['uid' => 1])->order('id desc')->find();
-//            if(empty($list) || $list['expect'] != $da2){
-//                $data = array(
-//                    'uid' => 3,
-//                    'expect' => $da2,
-//                    'opencode' => $da1,
-//                    'opentime' => time()
-//                );
-//                $r = Db::name('data')->insert($data);
-//            }
-//        }
-    }
+
 
 }
