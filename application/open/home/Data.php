@@ -12,18 +12,16 @@ use think\Db;
 
 class Data extends Controller
 {
-    private $arr;
 
     public function index(){
-        // 初始化 11 选五数据集
-        $this->initArr();
-
         echo 1;
         $this->pk10();
         echo 2;
         $this->xyft();
         echo 3;
-        $this->setSource();
+        $this->I15_gd(); //11选五
+        $this->I15_jx(); //11选五
+        $this->I15_sh(); //11选五
         echo 4;
         $this->test();
     }
@@ -68,6 +66,84 @@ class Data extends Controller
             $r = Db::name('data')->insert($data);
         }
     }
+
+    //广东11选五
+    private function I15_gd(){
+        $re = file_get_contents('http://www.gdlottery.cn/odata/zst11xuan5.jspx');
+        $r1 ='/<span style="width:140px">.*?<strong>(.*?)<\/strong><\/span>/ism';//取开奖号码
+        $r2 ='/<td height="20" align="center" bgcolor="#FFFFFF">(.*?)<\/td>/ism';//取期数
+        preg_match_all($r1, $re,$da1);
+        preg_match_all($r2, $re,$da2);
+        $da1 = trim(end($da1[1]));
+        $da2 = trim(end($da2[1]));
+        $da1 = explode('，',$da1);
+        $da1 = implode(',', $da1);
+        if ($da1) {
+            $list =  Db::name('data')->field('expect')->where(['uid' => 3])->order('id desc')->find();
+            if(empty($list) || $list['expect'] != $da2){
+                $data = array(
+                    'uid' => 3,
+                    'expect' => $da2,
+                    'opencode' => $da1,
+                    'opentime' => time()
+                );
+                $r = Db::name('data')->insert($data);
+            }
+        }
+    }
+
+    //江西11选五
+    public function I15_jx(){
+        $re = file_get_contents('http://www.jxlottery.cn/dlc.php');
+        $r1 ='/<table border="0" align="center" cellpadding="0" cellspacing="0">.*?<tr>(.*?)<\/tr>.*?<\/table>/ism';//取开奖号码
+        $r11 = '/<td class="kj_hm">(.*?)<\/td>/ism';
+        $r2 ='/<td align="center" bgcolor="#FFFFFF">(.*?)<\/td>/ism';//取期数
+        $r3 ='/<td height="25" align="center" bgcolor="#FFFFFF">(.*?)<\/td>/ism';//取开奖时间
+        preg_match_all($r1, $re,$da1);
+        preg_match_all($r11, end($da1[1]),$da11);
+        preg_match_all($r2, $re,$da2);
+        preg_match_all($r3, $re,$da3);
+        $da1 = implode(',', $da11[1]);
+        $da2 = trim(end($da2[1]));
+        $da3 = strtotime(trim(end($da3[1])));
+        if ($da1) {
+            $list =  Db::name('data')->field('expect')->where(['uid' => 4])->order('id desc')->find();
+            if(empty($list) || $list['expect'] != $da2){
+                $data = array(
+                    'uid' => 4,
+                    'expect' => $da2,
+                    'opencode' => $da1,
+                    'opentime' => $da3
+                );
+                $r = Db::name('data')->insert($data);
+            }
+        }
+    }
+
+    //上海11选五
+    public function I15_sh(){
+        $re = file_get_contents('http://caipiao.gooooal.com/shtc!bc115.action?ln=2018013018');
+
+        $r1 ='/<td align="center" bgcolor="#fff6c2" class="red2">(.*?)<\/td>/ism';//取开奖号码
+        $r2 ='/<td align="center" bgcolor="#fff6c2">(.*?)<\/td>/ism';//取期数
+        preg_match_all($r1, $re,$da1);
+        preg_match_all($r2, $re,$da2);
+        $da1 = $da1[1][0];
+        $da2 = $da2[1][0];
+        if ($da1) {
+            $list =  Db::name('data')->field('expect')->where(['uid' => 5])->order('id desc')->find();
+            if(empty($list) || $list['expect'] != $da2){
+                $data = array(
+                    'uid' => 5,
+                    'expect' => $da2,
+                    'opencode' => $da1,
+                    'opentime' => time()
+                );
+                $r = Db::name('data')->insert($data);
+            }
+        }
+    }
+
     private function test(){
         $re = file_get_contents('http://api.api68.com/pks/getLotteryPksInfo.do?lotCode=10001');
         $re1 = json_decode($re, true);
@@ -218,193 +294,59 @@ class Data extends Controller
     }
 
 
-    // 执行 抓取数据
-    private function setSource()
-    {
-        foreach ($this->arr as $k => $v) {
-            $this->$v['func']($v);
-        }
+
+
+
+
+
+    //浙江11选五
+    public function I15_zj(){
+        $re = file_get_contents('https://www.zjlottery.com/zsfx2/?flag=Z');
+        var_dump($re);exit;
+//        $r1 ='/<td align="center" bgcolor="#fff6c2" class="red2">(.*?)<\/td>/ism';//取开奖号码
+//        $r2 ='/<td align="center" bgcolor="#fff6c2">(.*?)<\/td>/ism';//取期数
+//        preg_match_all($r1, $re,$da1);
+//        preg_match_all($r2, $re,$da2);
+//        $da1 = $da1[1][0];
+//        $da2 = $da2[1][0];
+//        if ($da1) {
+//            $list =  Db::name('data')->field('expect')->where(['uid' => 5])->order('id desc')->find();
+//            if(empty($list) || $list['expect'] != $da2){
+//                $data = array(
+//                    'uid' => 5,
+//                    'expect' => $da2,
+//                    'opencode' => $da1,
+//                    'opentime' => time()
+//                );
+//                $r = Db::name('data')->insert($data);
+//            }
+//        }
     }
 
-
-    /**
-     * 11 选五
-     * @author HomeGrace
-     * time 2018年1月26日
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    public function I15($v)
-    {
-        $re1 = $this->curlS($v['url'], $v['urlD']);
-        switch ($v['data']['type']) {
-            case 'json':
-                $re1 = json_decode($re1, true);
-                break;
-            default:
-                break;
-        }
-        if ($re1) {
-            switch ($v['data']['quZhi']) {
-                case 'arr':
-                    $re1  = $re1[0];
-                    break;
-                default:
-                    break;
-            }
-
-            $list =  Db::name('data')->field('expect')->where(['uid' => $v['data']['ziDun']['uid']])->order('id desc')->find();
-            if(empty($list) || $list['expect'] != $re1[$v['data']['ziDun']['expect']]){
-                $data = array(
-                    'uid'      => $v['data']['ziDun']['uid'],
-                    'expect'   => $re1[$v['data']['ziDun']['expect']],
-                    'opencode' => $re1[$v['data']['ziDun']['opencode']],
-                );
-                switch ($v['time']['type']) {
-                    case 'subStr':
-                        $data['opentime'] = substr($re1[$v['data']['ziDun']['opentime']], $v['time']['code'][0], $v['time']['code'][1]);
-                        break;
-                    default:
-                        break;
-                }
-                Db::name('data')->insert($data);
-                echo "ok";
-            }
-        }
+    //山东11选五
+    public function I15_sd(){
+        $re = file_get_contents('https://www.ydniu.com/open/62.html');
+        var_dump($re);
+//        $r1 ='/<span style="width:140px">.*?<strong>(.*?)<\/strong><\/span>/ism';//取开奖号码
+//        $r2 ='/<td height="20" align="center" bgcolor="#FFFFFF">(.*?)<\/td>/ism';//取期数
+//        preg_match_all($r1, $re,$da1);
+//        preg_match_all($r2, $re,$da2);
+//        $da1 = trim($da1[1][11]);
+//        $da2 = trim($da2[1][11]);
+//        $da1 = explode('，',$da1);
+//        $da1 = implode(',', $da1);
+//        if ($da1) {
+//            $list =  Db::name('data')->field('expect')->where(['uid' => 1])->order('id desc')->find();
+//            if(empty($list) || $list['expect'] != $da2){
+//                $data = array(
+//                    'uid' => 3,
+//                    'expect' => $da2,
+//                    'opencode' => $da1,
+//                    'opentime' => time()
+//                );
+//                $r = Db::name('data')->insert($data);
+//            }
+//        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * 抓取数据  https 或 http 形式
-     * @param $url    链接
-     * @param $data   参数
-     * @return mixed  返回数据
-     */
-    private function curlS($url, $data)
-    {
-        $UserAgent = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1; .NET CLR 2.0.50727; .NET CLR 3.0.04506; .NET CLR 3.5.21022; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
-        $curl = curl_init(); // 启动一个CURL会话
-        curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // 从证书中检查SSL加密算法是否存在
-        curl_setopt($curl, CURLOPT_USERAGENT, $UserAgent/*$_SERVER['HTTP_USER_AGENT']*/); // 模拟用户使用的浏览器
-
-        if (ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) {
-
-            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-
-        }
-        //curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
-        curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
-        curl_setopt($curl, CURLOPT_POST, 1); // 发送一个常规的Post请求
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data); // Post提交的数据包
-        curl_setopt($curl, CURLOPT_TIMEOUT, 200); // 设置超时限制防止死循环
-        curl_setopt($curl, CURLOPT_HEADER, 0); // 显示返回的Header区域内容
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 获取的信息以文件流的形式返回
-        $tmpInfo = curl_exec($curl); // 执行操作
-        if (curl_errno($curl)) {
-            echo 'Errno'.curl_error($curl);//捕抓异常
-        }
-        curl_close($curl); // 关闭CURL会话
-        return $tmpInfo; // 返回数据
-    }
-
-
-    private function initArr() {
-        $this->arr = [
-            'GD11X5' => [
-                'url'  => 'https://3cp333.com/lottery/trendChart/lotteryOpenNum.do?lotCode=GD11X5',
-                'urlD' => [],
-                'func' => 'I15',
-                'time' => [
-                    'type' => 'subStr',
-                    'code' => [0, -3]
-                ],
-                'data' => [
-                    'type' => 'json',
-                    'quZhi'=> 'arr',
-                    'ziDun'=> [
-                        'uid'     => 3,
-                        'expect'  => 'qiHao',
-                        'opencode'=> 'haoMa',
-                        'opentime'=> 'endTime'
-                    ]
-                ]
-            ],
-            'SD11X5' => [
-                'url'  => 'https://3cp9.com/lottery/trendChart/lotteryOpenNum.do?lotCode=SD11X5',
-                'urlD' => [],
-                'func' => 'I15',
-                'time' => [
-                    'type' => 'subStr',
-                    'code' => [0, -3]
-                ],
-                'data' => [
-                    'type' => 'json',
-                    'quZhi'=> 'arr',
-                    'ziDun'=> [
-                        'uid'     => 4,
-                        'expect'  => 'qiHao',
-                        'opencode'=> 'haoMa',
-                        'opentime'=> 'endTime'
-                    ]
-                ]
-            ],
-            'JX11X5' => [
-                'url'  => 'https://3cp9.com/lottery/trendChart/lotteryOpenNum.do?lotCode=JX11X5',
-                'urlD' => [],
-                'func' => 'I15',
-                'time' => [
-                    'type' => 'subStr',
-                    'code' => [0, -3]
-                ],
-                'data' => [
-                    'type' => 'json',
-                    'quZhi'=> 'arr',
-                    'ziDun'=> [
-                        'uid'     => 5,
-                        'expect'  => 'qiHao',
-                        'opencode'=> 'haoMa',
-                        'opentime'=> 'endTime'
-                    ]
-                ]
-            ],
-            'SH11X5' => [
-                'url'  => 'https://3cp9.com/lottery/trendChart/lotteryOpenNum.do?lotCode=SH11X5',
-                'urlD' => [],
-                'func' => 'I15',
-                'time' => [
-                    'type' => 'subStr',
-                    'code' => [0, -3]
-                ],
-                'data' => [
-                    'type' => 'json',
-                    'quZhi'=> 'arr',
-                    'ziDun'=> [
-                        'uid'     => 6,
-                        'expect'  => 'qiHao',
-                        'opencode'=> 'haoMa',
-                        'opentime'=> 'endTime'
-                    ]
-                ]
-            ]
-        ];
-    }
-
-
 
 }
