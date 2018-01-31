@@ -14,8 +14,10 @@ class Data extends Controller
 {
 
     public function index(){
+
         echo 1;
         $this->pk10();
+        $this->test();
         echo 2;
         $this->xyft();
         echo 3;
@@ -24,7 +26,7 @@ class Data extends Controller
         $this->I15_sh(); //11选五
         $this->I15_sd(); //11选五
         echo 4;
-        $this->test();
+//        $this->test();
     }
     private function pk10(){
         $re = file_get_contents('http://e.apiplus.net/newly.do?token=t15e58a225c64f432k&code=bjpk10&format=json');
