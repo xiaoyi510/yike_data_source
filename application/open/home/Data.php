@@ -69,11 +69,11 @@ class Data extends Controller
         }
     }
     private function test(){
-        $re = file_get_contents('http://api.api68.com/pks/getLotteryPksInfo.do?lotCode=10001');
+        $re = file_get_contents('http://date.yike1908.com/public/index.php/open/datalist/index/id/1');
         $re1 = json_decode($re, true);
         $list =  Db::name('lottery_test')->order('id desc')->select();
         if(empty($list)){
-            $re2 = explode(',',$re1['result']['data']['preDrawCode']);
+            $re2 = explode(',',$re1['data'][0]['opencode']);
             if($re2[0] > $re2[9]){
                 $kj = '龙';
                 $re3 = 1;
@@ -82,8 +82,8 @@ class Data extends Controller
                 $re3 = 0;
             }
             $data = array(
-                'num' => $re1['result']['data']['preDrawIssue'],
-                'content' => $re1['result']['data']['preDrawCode'],
+                'num' => $re1['data'][0]['expect'],
+                'content' => $re1['data'][0]['opencode'],
                 'yc' => '龙',
                 'is_win' => $re3,
                 'kj' => $kj
@@ -95,13 +95,13 @@ class Data extends Controller
                 $yc = '虎';
             }
             $data1 = array(
-                'num' => $re1['result']['data']['preDrawIssue'] + 1,
+                'num' => $re1['data'][0]['expect'] + 1,
                 'yc' => $yc
             );
             Db::name('lottery_test')->insert($data1);
         }else{
-            if($re1['result']['data']['preDrawIssue'] == $list[0]['num']){
-                $re2 = explode(',',$re1['result']['data']['preDrawCode']);
+            if($re1['data'][0]['expect'] >= $list[0]['num']){
+                $re2 = explode(',',$re1['data'][0]['opencode']);
                 if($re2[0] > $re2[9]){
                     $kj = '龙';
                     if($list[0]['yc'] == '龙'){
@@ -118,8 +118,8 @@ class Data extends Controller
                     }
                 }
                 $data = array(
-                    'num' => $re1['result']['data']['preDrawIssue'],
-                    'content' => $re1['result']['data']['preDrawCode'],
+                    'num' => $re1['data'][0]['expect'],
+                    'content' => $re1['data'][0]['opencode'],
                     'is_win' => $re3,
                     'kj' => $kj
                 );
@@ -136,19 +136,19 @@ class Data extends Controller
                     $yc = $kj;
                 }
                 $data1 = array(
-                    'num' => $re1['result']['data']['preDrawIssue'] + 1,
+                    'num' => $re1['data'][0]['expect'] + 1,
                     'yc' => $yc
                 );
                 Db::name('lottery_test')->insert($data1);
             }
         }
         //
-        //echo $re1['result']['data']['preDrawIssue'];
+        //echo $re1['data']['data']['expect'];
         $list1 =  Db::name('lottery_test1')->order('id desc')->find();
         $list =  Db::name('lottery_test')->order('id desc')->select();
         if($list1){
-            if($re1['result']['data']['preDrawIssue'] == $list1['num']) {
-                $re2 = explode(',', $re1['result']['data']['preDrawCode']);
+            if($re1['data'][0]['expect'] >= $list1['num']) {
+                $re2 = explode(',', $re1['data'][0]['opencode']);
                 if ($re2[0] > $re2[9]) {
                     if ($list1['yc'] == '龙') {
                         $re3 = 1;
@@ -163,8 +163,8 @@ class Data extends Controller
                     }
                 }
                 $data = array(
-                    'num' => $re1['result']['data']['preDrawIssue'],
-                    'content' => $re1['result']['data']['preDrawCode'],
+                    'num' => $re1['data'][0]['expect'],
+                    'content' => $re1['data'][0]['opencode'],
                     'is_win' => $re3
                 );
                 Db::name('lottery_test1')->where(['id' => $list1['id']])->update($data);
@@ -194,7 +194,7 @@ class Data extends Controller
                     }
                 }
                 $data1 = array(
-                    'num' => $re1['result']['data']['preDrawIssue'] + 1,
+                    'num' => $re1['data'][0]['expect'] + 1,
                     'yc' => $yc
                 );
                 Db::name('lottery_test1')->insert($data1);
@@ -210,7 +210,7 @@ class Data extends Controller
                 $yc = $list[0]['yc'];
             }
             $data1 = array(
-                'num' => $re1['result']['data']['preDrawIssue'] + 1,
+                'num' => $re1['data'][0]['expect'] + 1,
                 'yc' => $yc
             );
             Db::name('lottery_test1')->insert($data1);
