@@ -48,6 +48,7 @@ class Message extends Controller
                     if (isset($resp->result)) {
                         if ($resp->result->success) {
                             $data1['is_ok'] = 1;
+                            $data1['reason'] = $data['msg'].'开奖失败';
                         } else {
                             $data1['is_ok'] = 0;
                             $da = $this->verification_code($resp);
