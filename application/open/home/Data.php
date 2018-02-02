@@ -300,7 +300,7 @@ class Data extends Controller
                     if($list[1]['kj'] == $kj){
                         $yc = $list[0]['yc'];
                     }elseif($list[1]['kj'] != $kj && $list[1]['kj'] == $list[2]['kj']){
-                        $yc = $list[0]['yc'];
+                        $yc = $kj;
                     }else{
                         $yc = $list[1]['kj'];
                     }
