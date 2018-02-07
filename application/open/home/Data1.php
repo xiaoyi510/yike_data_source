@@ -14,6 +14,7 @@ class Data1 extends Data
     public function index()
     {
         $this->xu28();
+        $this->cqSsc();
     }
 
 }

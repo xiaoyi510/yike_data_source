@@ -457,7 +457,53 @@ class Data extends Controller
         }
     }
 
+    /**
+     * 重庆时时彩
+     * @author HomeGrace
+     * 时间  2018年2月7日
+     */
+    protected function cqSsc()
+    {
+        try {
+            $re = file_get_contents('https://www.7caiapi.com/lottery/3.html');
+            preg_match('/<tr class="cq">(.*?)<\/tr>/ism', $re, $result);  // 取得重庆时时彩
+            $result = $result[1];
 
+            preg_match('/<td><span.*?id="qs_54">第(.*?)期<\/span><\/td>/ism', $result, $result1); // 取得期数
+            $result1 = $result1[1];
+
+            preg_match_all('/<div.*?class=".*?">(.*?)<\/div>/ism', $result, $result2); // 取得开奖号码
+            $result2 = join(',', $result2[1]);
+
+            preg_match('/<span class="xs0" title="(.*?)">(.*?)<\/span>/ism', $result, $result3); // 取得开奖时间
+            unset($result3[0]);
+            $result3 = join(' ', $result3);
+
+            if ($result2) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 8])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $result1) {
+                    $data = [
+                        'uid'      => 8,
+                        'expect'   => $result1,
+                        'opencode' => $result2,
+                        'opentime' => strtotime($result3),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'cqSsc:ok<br/>';
+                    } else {
+                        echo 'cqSsc:NO<br/>';
+                    }
+                }else {
+                    echo 'cqSsc:Yes<br/>';
+                }
+            } else {
+                echo 'cqSsc:NO, Code<br/>';
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:cqSsc↑<br/>';
+        }
+    }
 
 
 
