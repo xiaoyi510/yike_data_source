@@ -9,6 +9,7 @@
 namespace app\open\home;
 use think\Controller;
 use think\Db;
+use think\Exception;
 
 class Data extends Controller
 {
@@ -390,6 +391,71 @@ class Data extends Controller
     }
 
 
+    /**
+     * 幸运28
+     * @author HomeGrace
+     * 时间 2018年2月7日
+     */
+    protected function xu28()
+    {
+        try {
+            $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryinfo?lotKey=xy28');
+            $re = json_decode($re, true);
+            $re = $re['result']['data'];
+            if ($re['preDrawCode']) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 7])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $re['preDrawIssue']) {
+                    $data = [
+                        'uid'      => 7,
+                        'expect'   => $re['preDrawIssue'],
+                        'opencode' => $re['preDrawCode'],
+                        'opentime' => strtotime($re['preDrawTime']),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'xu28:ok<br/>';
+                    } else {
+                        echo 'xu28:NO<br/>';
+                    }
+                } else {
+                    echo 'xu28:Yes<br/>';
+                }
+            } else {
+                echo 'xu28:NO, Code<br/>';
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().'<br/>';
+            try {
+                echo '已挂执行第二次抓取:xu28↓<br/>';
+                $re = file_get_contents('https://3cp9.com/lottery/trendChart/lotteryOpenNum.do?lotCode=PCEGG');
+                $re = json_decode($re, true);
+                $re = $re[0];
+                if ($re['haoMa']) {
+                    $list =  Db::name('data')->field('expect')->where(['uid' => 7])->order('id desc')->find();
+                    if (empty($list) || $list['expect'] != $re['qiHao']) {
+                        $data = [
+                            'uid'      => 7,
+                            'expect'   => $re['qiHao'],
+                            'opencode' => $re['haoMa'],
+                            'opentime' => substr($re['openTime'], 0, -3),
+                        ];
+                        $r = Db::name('data')->insert($data);
+                        if ($r) {
+                            echo 'xu28:ok<br/>';
+                        } else {
+                            echo 'xu28:NO<br/>';
+                        }
+                    }else {
+                        echo 'xu28:Yes<br/>';
+                    }
+                } else {
+                    echo 'xu28:NO, Code<br/>';
+                }
+            } catch (\Exception $e) {
+                echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:xu28↑<br/>';
+            }
+        }
+    }
 
 
 

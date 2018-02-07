@@ -23,6 +23,10 @@ function data(){
     $url = 'http://date.yike1908.com/public/index.php/open/data';
     file_get_contents($url);
     echo date('Y-m-d H:i:s')."\n";
+
+    $url = 'http://date.yike1908.com/public/index.php/open/data1';
+    $result = file_get_contents($url);
+    echo $result.date('Y-m-d H:i:s')."\n";
 }
 
 $task = new Worker();
