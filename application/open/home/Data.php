@@ -30,7 +30,7 @@ class Data extends Controller
 //        $this->test();
         // 定时删除两天以前的数据
         if (strtotime(date('Y-m-d').'3:0:0') > time() && time() < strtotime(date('Y-m-d').'3:1:0')) {
-            $time =strtotime('-2 day '. date('Y-m-d H:i:s'));
+            $time =strtotime('-2 day '. date('Y-m-d'));
             Db::name('data')->where(['opentime' => ['lt', $time]])->delete();
         }
     }
