@@ -19,11 +19,15 @@ function get($url){
     return $result;
 }
 
-function data(){
+function data()
+{
     $url = 'http://date.yike1908.com/public/index.php/open/data';
     file_get_contents($url);
     echo date('Y-m-d H:i:s')."\n";
+}
 
+function data1()
+{
     $url = 'http://date.yike1908.com/public/index.php/open/data1';
     $result = file_get_contents($url);
     echo $result.date('Y-m-d H:i:s')."\n";
@@ -34,9 +38,8 @@ $task = new Worker();
 $task->count = 1;
 $task->onWorkerStart = function($task)
 {
-    // 每1秒执行一次
-    $time_interval = 10;
-    Timer::add($time_interval, 'data', array());
+    Timer::add(10, 'data', array());
+    Timer::add(10, 'data1', array());
 };
 
 // 运行worker
