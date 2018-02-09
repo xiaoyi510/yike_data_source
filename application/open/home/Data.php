@@ -22,10 +22,10 @@ class Data extends Controller
         echo 2;
         $this->xyft();
         echo 3;
-        $this->I15_gd(); //11选五
-        $this->I15_jx(); //11选五
-        $this->I15_sh(); //11选五
-        $this->I15_sd(); //11选五
+        $this->I15_gd();
+        $this->I15_jx();
+        $this->I15_sh();
+        $this->I15_sd();
         echo 4;
 //        $this->test();
         // 定时删除两天以前的数据
@@ -34,6 +34,13 @@ class Data extends Controller
             Db::name('data')->where(['opentime' => ['lt', $time]])->delete();
         }
     }
+
+    /**
+     * Pk10
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     private function pk10(){
         $re = file_get_contents('http://e.apiplus.net/newly.do?token=t15e58a225c64f432k&code=bjpk10&format=json');
         $re1 = json_decode($re, true);
@@ -50,6 +57,13 @@ class Data extends Controller
             }
         }
     }
+
+    /**
+     * 幸运飞艇
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     private function xyft(){
         $re = file_get_contents('http://api.caipiaokong.cn/lottery/?name=xyft&format=json&uid=824514&token=982456d50dfc3e4746bdef4c9009eba2d5e9557d');
         $re1 = json_decode($re, true);
@@ -506,7 +520,36 @@ class Data extends Controller
                 echo 'cqSsc:NO, Code<br/>';
             }
         } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:cqSsc↑<br/>';
+            echo $e->getFile().':'.$e->getLine().'<br/>';
+            try {
+                echo '已挂执行第二次抓取:cqSsc↓<br/>';
+                $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=ssc&lotCode=10002');
+                $re = json_decode($re, true);
+                $re = $re['result']['data'];
+                if ($re['preDrawCode']) {
+                    $list =  Db::name('data')->field('expect')->where(['uid' => 8])->order('id desc')->find();
+                    if (empty($list) || $list['expect'] != $re['preDrawIssue']) {
+                        $data = [
+                            'uid'      => 8,
+                            'expect'   => $re['preDrawIssue'],
+                            'opencode' => $re['preDrawCode'],
+                            'opentime' => strtotime($re['preDrawTime']),
+                        ];
+                        $r = Db::name('data')->insert($data);
+                        if ($r) {
+                            echo 'cqSsc:ok<br/>';
+                        } else {
+                            echo 'cqSsc:NO<br/>';
+                        }
+                    } else {
+                        echo 'cqSsc:Yes<br/>';
+                    }
+                } else {
+                    echo 'cqSsc:NO, Code<br/>';
+                }
+            } catch (\Exception $e) {
+                echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:cqSsc↑<br/>';
+            }
         }
     }
 
