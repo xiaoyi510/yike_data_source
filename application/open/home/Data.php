@@ -480,6 +480,7 @@ class Data extends Controller
      * 重庆时时彩
      * @author HomeGrace
      * 时间  2018年2月7日
+     * 修改时间  2018年2月9日 HomeGrace
      */
     protected function cqSsc()
     {
@@ -550,6 +551,154 @@ class Data extends Controller
             } catch (\Exception $e) {
                 echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:cqSsc↑<br/>';
             }
+        }
+    }
+
+    /**
+     * 天津时时彩
+     * @author HomeGrace
+     * 时间 2018年2月9日
+     */
+    public function tjSsc()
+    {
+        try {
+            $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=tjssc&lotCode=10002');
+            $re = json_decode($re, true);
+            $re = $re['result']['data'];
+            if ($re['preDrawCode']) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 9])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $re['preDrawIssue']) {
+                    $data = [
+                        'uid'      => 9,
+                        'expect'   => $re['preDrawIssue'],
+                        'opencode' => $re['preDrawCode'],
+                        'opentime' => strtotime($re['preDrawTime']),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'tjSsc:ok<br/>';
+                    } else {
+                        echo 'tjSsc:NO<br/>';
+                    }
+                } else {
+                    echo 'tjSsc:Yes<br/>';
+                }
+            } else {
+                echo 'tjSsc:NO, Code<br/>';
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:tjSsc↑<br/>';
+        }
+    }
+
+    /**
+     * 新疆时时彩
+     * @author HomeGrace
+     * 时间 2018年2月9日
+     */
+    public function xjSsc()
+    {
+        try {
+            $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=xjssc&lotCode=10002');
+            $re = json_decode($re, true);
+            $re = $re['result']['data'];
+            if ($re['preDrawCode']) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 10])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $re['preDrawIssue']) {
+                    $data = [
+                        'uid'      => 10,
+                        'expect'   => $re['preDrawIssue'],
+                        'opencode' => $re['preDrawCode'],
+                        'opentime' => strtotime($re['preDrawTime']),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'xjSsc:ok<br/>';
+                    } else {
+                        echo 'xjSsc:NO<br/>';
+                    }
+                } else {
+                    echo 'xjSsc:Yes<br/>';
+                }
+            } else {
+                echo 'xjSsc:NO, Code<br/>';
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:xjSsc↑<br/>';
+        }
+    }
+
+    /**
+     * 云南时时彩
+     * @author HomeGrace
+     * 时间 2018年2月9日
+     */
+    public function ynSsc()
+    {
+        try {
+            $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=ynssc&lotCode=10002');
+            $re = json_decode($re, true);
+            $re = $re['result']['data'];
+            if ($re['preDrawCode']) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 11])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $re['preDrawIssue']) {
+                    $data = [
+                        'uid'      => 11,
+                        'expect'   => $re['preDrawIssue'],
+                        'opencode' => $re['preDrawCode'],
+                        'opentime' => strtotime($re['preDrawTime']),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'ynSsc:ok<br/>';
+                    } else {
+                        echo 'ynSsc:NO<br/>';
+                    }
+                } else {
+                    echo 'ynSsc:Yes<br/>';
+                }
+            } else {
+                echo 'ynSsc:NO, Code<br/>';
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:ynSsc↑<br/>';
+        }
+    }
+
+    /**
+     * 极速时时彩
+     * @author HomeGrace
+     * 时间 2018年2月9日
+     */
+    public function jsSsc()
+    {
+        try {
+            $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=jsssc&lotCode=10002');
+            $re = json_decode($re, true);
+            $re = $re['result']['data'];
+            if ($re['preDrawCode']) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 12])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $re['preDrawIssue']) {
+                    $data = [
+                        'uid'      => 12,
+                        'expect'   => $re['preDrawIssue'],
+                        'opencode' => $re['preDrawCode'],
+                        'opentime' => strtotime($re['preDrawTime']),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'jsSsc:ok<br/>';
+                    } else {
+                        echo 'jsSsc:NO<br/>';
+                    }
+                } else {
+                    echo 'jsSsc:Yes<br/>';
+                }
+            } else {
+                echo 'jsSsc:NO, Code<br/>';
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:jsSsc↑<br/>';
         }
     }
 
