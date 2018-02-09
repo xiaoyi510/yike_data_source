@@ -440,10 +440,10 @@ class Data extends Controller
                     echo 'xu28:Yes<br/>';
                 }
             } else {
-                echo 'xu28:NO, Code<br/>';
+                throw new Exception('xu28:NO, Code');
             }
         } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().'<br/>';
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>';
             try {
                 echo '已挂执行第二次抓取:xu28↓<br/>';
                 $re = file_get_contents('https://3cp9.com/lottery/trendChart/lotteryOpenNum.do?lotCode=PCEGG');
@@ -468,10 +468,10 @@ class Data extends Controller
                         echo 'xu28:Yes<br/>';
                     }
                 } else {
-                    echo 'xu28:NO, Code<br/>';
+                    throw new Exception('xu28:NO, Code');
                 }
             } catch (\Exception $e) {
-                echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:xu28↑<br/>';
+                echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:xu28↑<br/>';
             }
         }
     }
@@ -518,10 +518,10 @@ class Data extends Controller
                     echo 'cqSsc:Yes<br/>';
                 }
             } else {
-                echo 'cqSsc:NO, Code<br/>';
+                throw new Exception('cqSsc:NO, Code');
             }
         } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().'<br/>';
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>';
             try {
                 echo '已挂执行第二次抓取:cqSsc↓<br/>';
                 $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=ssc&lotCode=10002');
@@ -546,10 +546,10 @@ class Data extends Controller
                         echo 'cqSsc:Yes<br/>';
                     }
                 } else {
-                    echo 'cqSsc:NO, Code<br/>';
+                    throw new Exception('cqSsc:NO, Code');
                 }
             } catch (\Exception $e) {
-                echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:cqSsc↑<br/>';
+                echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:cqSsc↑<br/>';
             }
         }
     }
@@ -559,7 +559,7 @@ class Data extends Controller
      * @author HomeGrace
      * 时间 2018年2月9日
      */
-    public function tjSsc()
+    protected function tjSsc()
     {
         try {
             $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=tjssc&lotCode=10002');
@@ -584,10 +584,10 @@ class Data extends Controller
                     echo 'tjSsc:Yes<br/>';
                 }
             } else {
-                echo 'tjSsc:NO, Code<br/>';
+                throw new Exception('tjSsc:NO, Code');
             }
         } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:tjSsc↑<br/>';
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:tjSsc↑<br/>';
         }
     }
 
@@ -596,7 +596,7 @@ class Data extends Controller
      * @author HomeGrace
      * 时间 2018年2月9日
      */
-    public function xjSsc()
+    protected function xjSsc()
     {
         try {
             $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=xjssc&lotCode=10002');
@@ -621,10 +621,10 @@ class Data extends Controller
                     echo 'xjSsc:Yes<br/>';
                 }
             } else {
-                echo 'xjSsc:NO, Code<br/>';
+                throw new Exception('xjSsc:NO, Code');
             }
         } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:xjSsc↑<br/>';
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:xjSsc↑<br/>';
         }
     }
 
@@ -633,7 +633,7 @@ class Data extends Controller
      * @author HomeGrace
      * 时间 2018年2月9日
      */
-    public function ynSsc()
+    protected function ynSsc()
     {
         try {
             $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=ynssc&lotCode=10002');
@@ -658,10 +658,10 @@ class Data extends Controller
                     echo 'ynSsc:Yes<br/>';
                 }
             } else {
-                echo 'ynSsc:NO, Code<br/>';
+                throw new Exception('ynSsc:NO, Code');
             }
         } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:ynSsc↑<br/>';
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:ynSsc↑<br/>';
         }
     }
 
@@ -670,7 +670,7 @@ class Data extends Controller
      * @author HomeGrace
      * 时间 2018年2月9日
      */
-    public function jsSsc()
+    protected function jsSsc()
     {
         try {
             $re = file_get_contents('http://www.caipiaoapi.com/hall/hallajax/getLotteryInfo?lotKey=jsssc&lotCode=10002');
@@ -695,17 +695,17 @@ class Data extends Controller
                     echo 'jsSsc:Yes<br/>';
                 }
             } else {
-                echo 'jsSsc:NO, Code<br/>';
+                throw new Exception('jsSsc:NO, Code');
             }
         } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().'<br/>所有数据都挂了:jsSsc↑<br/>';
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:jsSsc↑<br/>';
         }
     }
 
 
 
     //浙江11选五
-    public function I15_zj(){
+    protected function I15_zj(){
         $re = file_get_contents('https://www.zjlottery.com/zsfx2/?flag=Z');
         var_dump($re);exit;
 //        $r1 ='/<td align="center" bgcolor="#fff6c2" class="red2">(.*?)<\/td>/ism';//取开奖号码
