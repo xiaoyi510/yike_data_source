@@ -15,6 +15,10 @@ class Data1 extends Data
     {
         $this->xu28();
         $this->cqSsc();
+        $this->tjSsc();
+        $this->xjSsc();
+        $this->ynSsc();
+        $this->jsSsc();
     }
 
 }
