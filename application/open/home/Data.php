@@ -28,6 +28,11 @@ class Data extends Controller
         $this->I15_sd(); //11选五
         echo 4;
 //        $this->test();
+        // 定时删除两天以前的数据
+        if (strtotime(date('Y-m-d').'3:0:0') > time() && time() < strtotime(date('Y-m-d').'3:1:0')) {
+            $time =strtotime('-2 day '. date('Y-m-d H:i:s'));
+            Db::name('data')->where(['opentime' => ['lt', $time]])->delete();
+        }
     }
     private function pk10(){
         $re = file_get_contents('http://e.apiplus.net/newly.do?token=t15e58a225c64f432k&code=bjpk10&format=json');
