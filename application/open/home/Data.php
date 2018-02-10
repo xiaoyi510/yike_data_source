@@ -194,25 +194,26 @@ class Data extends Controller
         $list =  Db::name('lottery_test')->order('id desc')->select();
         if(empty($list)){
             $re2 = explode(',',$re1['data'][0]['opencode']);
-            if($re2[0] > $re2[9]){
-                $kj = '龙';
+            if($re2[9] % 2 == 0){
+                $kj = '双';
                 $re3 = 1;
             }else{
-                $kj = '虎';
+                $kj = '单';
                 $re3 = 0;
             }
             $data = array(
                 'num' => $re1['data'][0]['expect'],
                 'content' => $re1['data'][0]['opencode'],
-                'yc' => '龙',
+                'yc' => '双',
                 'is_win' => $re3,
                 'kj' => $kj
             );
             Db::name('lottery_test')->insert($data);
-            if($re3 ==  1){
-                $yc = '龙';
+            $r = $re2[5] + $re2[6] + $re2[7] + $re2[8] + $re2[9];
+            if($r % 2 == 0){
+                $yc = '双';
             }else{
-                $yc = '虎';
+                $yc = '单';
             }
             $data1 = array(
                 'num' => $re1['data'][0]['expect'] + 1,
@@ -222,16 +223,16 @@ class Data extends Controller
         }else{
             if($re1['data'][0]['expect'] >= $list[0]['num']){
                 $re2 = explode(',',$re1['data'][0]['opencode']);
-                if($re2[0] > $re2[9]){
-                    $kj = '龙';
-                    if($list[0]['yc'] == '龙'){
+                if($re2[9] % 2 == 0){
+                    $kj = '双';
+                    if($list[0]['yc'] == '双'){
                         $re3 = 1;
                     }else{
                         $re3 = 0;
                     }
                 }else{
-                    $kj = '虎';
-                    if($list[0]['yc'] == '虎'){
+                    $kj = '单';
+                    if($list[0]['yc'] == '单'){
                         $re3 = 1;
                     }else{
                         $re3 = 0;
@@ -244,16 +245,22 @@ class Data extends Controller
                     'kj' => $kj
                 );
                 Db::name('lottery_test')->where(['id'=>$list[0]['id']])->update($data);
-                if(count($list) > 2){
-                    if($list[1]['kj'] == $kj){
-                        $yc = $kj;
-                    }elseif($list[1]['kj'] != $kj && $list[1]['kj'] == $list[2]['kj']){
-                        $yc = $kj;
-                    }else{
-                        $yc = $list[1]['kj'];
-                    }
+//                if(count($list) > 2){
+//                    if($list[1]['kj'] == $kj){
+//                        $yc = $kj;
+//                    }elseif($list[1]['kj'] != $kj && $list[1]['kj'] == $list[2]['kj']){
+//                        $yc = $kj;
+//                    }else{
+//                        $yc = $list[1]['kj'];
+//                    }
+//                }else{
+//                    $yc = $kj;
+//                }
+                $r = $re2[5] + $re2[6] + $re2[7] + $re2[8] + $re2[9];
+                if($r % 2 == 0){
+                    $yc = '双';
                 }else{
-                    $yc = $kj;
+                    $yc = '单';
                 }
                 $data1 = array(
                     'num' => $re1['data'][0]['expect'] + 1,
@@ -266,25 +273,38 @@ class Data extends Controller
         $list =  Db::name('lottery_test1')->order('id desc')->select();
         if(empty($list)){
             $re2 = explode(',',$re1['data'][0]['opencode']);
-            if($re2[0] > $re2[9]){
-                $kj = '龙';
+//            if($re2[0] > $re2[9]){
+//                $kj = '龙';
+//                $re3 = 1;
+//            }else{
+//                $kj = '虎';
+//                $re3 = 0;
+//            }
+            if($re2[9] % 2 == 0){
+                $kj = '双';
                 $re3 = 1;
             }else{
-                $kj = '虎';
+                $kj = '单';
                 $re3 = 0;
             }
             $data = array(
                 'num' => $re1['data'][0]['expect'],
                 'content' => $re1['data'][0]['opencode'],
-                'yc' => '龙',
+                'yc' => '双',
                 'is_win' => $re3,
                 'kj' => $kj
             );
             Db::name('lottery_test1')->insert($data);
-            if($re3 ==  1){
-                $yc = '龙';
+//            if($re3 ==  1){
+//                $yc = '龙';
+//            }else{
+//                $yc = '虎';
+//            }
+            $r = $re2[5] + $re2[6] + $re2[7] + $re2[8];
+            if($r % 2 == 0){
+                $yc = '双';
             }else{
-                $yc = '虎';
+                $yc = '单';
             }
             $data1 = array(
                 'num' => $re1['data'][0]['expect'] + 1,
@@ -294,16 +314,31 @@ class Data extends Controller
         }else{
             if($re1['data'][0]['expect'] >= $list[0]['num']){
                 $re2 = explode(',',$re1['data'][0]['opencode']);
-                if($re2[0] > $re2[9]){
-                    $kj = '龙';
-                    if($list[0]['yc'] == '龙'){
+//                if($re2[0] > $re2[9]){
+//                    $kj = '龙';
+//                    if($list[0]['yc'] == '龙'){
+//                        $re3 = 1;
+//                    }else{
+//                        $re3 = 0;
+//                    }
+//                }else{
+//                    $kj = '虎';
+//                    if($list[0]['yc'] == '虎'){
+//                        $re3 = 1;
+//                    }else{
+//                        $re3 = 0;
+//                    }
+//                }
+                if($re2[9] % 2 == 0){
+                    $kj = '双';
+                    if($list[0]['yc'] == '双'){
                         $re3 = 1;
                     }else{
                         $re3 = 0;
                     }
                 }else{
-                    $kj = '虎';
-                    if($list[0]['yc'] == '虎'){
+                    $kj = '单';
+                    if($list[0]['yc'] == '单'){
                         $re3 = 1;
                     }else{
                         $re3 = 0;
@@ -316,16 +351,22 @@ class Data extends Controller
                     'kj' => $kj
                 );
                 Db::name('lottery_test1')->where(['id'=>$list[0]['id']])->update($data);
-                if(count($list) > 2){
-                    if($list[1]['kj'] == $kj){
-                        $yc = $list[0]['yc'];
-                    }elseif($list[1]['kj'] != $kj && $list[1]['kj'] == $list[2]['kj']){
-                        $yc = $kj;
-                    }else{
-                        $yc = $list[1]['kj'];
-                    }
+//                if(count($list) > 2){
+//                    if($list[1]['kj'] == $kj){
+//                        $yc = $list[0]['yc'];
+//                    }elseif($list[1]['kj'] != $kj && $list[1]['kj'] == $list[2]['kj']){
+//                        $yc = $kj;
+//                    }else{
+//                        $yc = $list[1]['kj'];
+//                    }
+//                }else{
+//                    $yc = $kj;
+//                }
+                $r = $re2[5] + $re2[6] + $re2[7] + $re2[8];
+                if($r % 2 == 0){
+                    $yc = '双';
                 }else{
-                    $yc = $kj;
+                    $yc = '单';
                 }
                 $data1 = array(
                     'num' => $re1['data'][0]['expect'] + 1,
@@ -334,79 +375,6 @@ class Data extends Controller
                 Db::name('lottery_test1')->insert($data1);
             }
         }
-        //
-        //echo $re1['data']['data']['expect'];
-//        $list1 =  Db::name('lottery_test1')->order('id desc')->find();
-//        $list =  Db::name('lottery_test')->order('id desc')->select();
-//        if($list1){
-//            if($re1['data'][0]['expect'] >= $list1['num']) {
-//                $re2 = explode(',', $re1['data'][0]['opencode']);
-//                if ($re2[0] > $re2[9]) {
-//                    if ($list1['yc'] == '龙') {
-//                        $re3 = 1;
-//                    } else {
-//                        $re3 = 0;
-//                    }
-//                } else {
-//                    if ($list1['yc'] == '虎') {
-//                        $re3 = 1;
-//                    } else {
-//                        $re3 = 0;
-//                    }
-//                }
-//                $data = array(
-//                    'num' => $re1['data'][0]['expect'],
-//                    'content' => $re1['data'][0]['opencode'],
-//                    'is_win' => $re3
-//                );
-//                Db::name('lottery_test1')->where(['id' => $list1['id']])->update($data);
-//                if($list[2]['is_win'] == $list[1]['is_win']){
-//                    if($list[1]['is_win'] == 0){
-//                        if($list[0]['yc'] == '龙'){
-//                            $yc = '虎';
-//                        }else{
-//                            $yc = '龙';
-//                        }
-//                    }else{
-//                        if($list[0]['yc'] == '龙'){
-//                            $yc = '龙';
-//                        }else{
-//                            $yc = '虎';
-//                        }
-//                    }
-//                }else{
-//                    if($list[1]['is_win'] == 1){
-//                        if($list[0]['yc'] == '龙'){
-//                            $yc = '虎';
-//                        }else{
-//                            $yc = '龙';
-//                        }
-//                    }else{
-//                        $yc = $list[0]['yc'];
-//                    }
-//                }
-//                $data1 = array(
-//                    'num' => $re1['data'][0]['expect'] + 1,
-//                    'yc' => $yc
-//                );
-//                Db::name('lottery_test1')->insert($data1);
-//            }
-//        }else{
-//            if($list[1]['is_win'] == 1){
-//                if($list[0]['yc'] == '龙'){
-//                    $yc = '虎';
-//                }else{
-//                    $yc = '龙';
-//                }
-//            }else{
-//                $yc = $list[0]['yc'];
-//            }
-//            $data1 = array(
-//                'num' => $re1['data'][0]['expect'] + 1,
-//                'yc' => $yc
-//            );
-//            Db::name('lottery_test1')->insert($data1);
-//        }
     }
 
 
