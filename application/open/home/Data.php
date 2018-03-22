@@ -18,7 +18,6 @@ class Data extends Controller
 
         echo 1;
         $this->pk10();
-        $this->test();
         echo 2;
         $this->xyft();
         echo 3;
@@ -26,8 +25,13 @@ class Data extends Controller
         $this->I15_jx();
         $this->I15_sh();
         $this->I15_sd();
+        $this->I15_hl();
+        $this->I15_hb();
+        $this->I15_gz();
+        $this->I15_gs();
+        $this->I15_fj();
+        $this->I15_sx();
         echo 4;
-//        $this->test();
         // 定时删除两天以前的数据
         if (strtotime(date('Y-m-d').'3:0:0') > time() && time() < strtotime(date('Y-m-d').'3:1:0')) {
             $time =strtotime('-2 day '. date('Y-m-d'));
@@ -187,196 +191,6 @@ class Data extends Controller
             }
         }
     }
-
-    private function test(){
-        $re = file_get_contents('http://date.yike1908.com/public/index.php/open/datalist/index/id/1');
-        $re1 = json_decode($re, true);
-        $list =  Db::name('lottery_test')->order('id desc')->select();
-        if(empty($list)){
-            $re2 = explode(',',$re1['data'][0]['opencode']);
-            if($re2[9] % 2 == 0){
-                $kj = '双';
-                $re3 = 1;
-            }else{
-                $kj = '单';
-                $re3 = 0;
-            }
-            $data = array(
-                'num' => $re1['data'][0]['expect'],
-                'content' => $re1['data'][0]['opencode'],
-                'yc' => '双',
-                'is_win' => $re3,
-                'kj' => $kj
-            );
-            Db::name('lottery_test')->insert($data);
-            $r = $re2[5] + $re2[6] + $re2[7] + $re2[8] + $re2[9];
-            if($r % 2 == 0){
-                $yc = '双';
-            }else{
-                $yc = '单';
-            }
-            $data1 = array(
-                'num' => $re1['data'][0]['expect'] + 1,
-                'yc' => $yc
-            );
-            Db::name('lottery_test')->insert($data1);
-        }else{
-            if($re1['data'][0]['expect'] >= $list[0]['num']){
-                $re2 = explode(',',$re1['data'][0]['opencode']);
-                if($re2[9] % 2 == 0){
-                    $kj = '双';
-                    if($list[0]['yc'] == '双'){
-                        $re3 = 1;
-                    }else{
-                        $re3 = 0;
-                    }
-                }else{
-                    $kj = '单';
-                    if($list[0]['yc'] == '单'){
-                        $re3 = 1;
-                    }else{
-                        $re3 = 0;
-                    }
-                }
-                $data = array(
-                    'num' => $re1['data'][0]['expect'],
-                    'content' => $re1['data'][0]['opencode'],
-                    'is_win' => $re3,
-                    'kj' => $kj
-                );
-                Db::name('lottery_test')->where(['id'=>$list[0]['id']])->update($data);
-//                if(count($list) > 2){
-//                    if($list[1]['kj'] == $kj){
-//                        $yc = $kj;
-//                    }elseif($list[1]['kj'] != $kj && $list[1]['kj'] == $list[2]['kj']){
-//                        $yc = $kj;
-//                    }else{
-//                        $yc = $list[1]['kj'];
-//                    }
-//                }else{
-//                    $yc = $kj;
-//                }
-                $r = $re2[5] + $re2[6] + $re2[7] + $re2[8] + $re2[9];
-                if($r % 2 == 0){
-                    $yc = '双';
-                }else{
-                    $yc = '单';
-                }
-                $data1 = array(
-                    'num' => $re1['data'][0]['expect'] + 1,
-                    'yc' => $yc
-                );
-                Db::name('lottery_test')->insert($data1);
-            }
-        }
-
-        $list =  Db::name('lottery_test1')->order('id desc')->select();
-        if(empty($list)){
-            $re2 = explode(',',$re1['data'][0]['opencode']);
-//            if($re2[0] > $re2[9]){
-//                $kj = '龙';
-//                $re3 = 1;
-//            }else{
-//                $kj = '虎';
-//                $re3 = 0;
-//            }
-            if($re2[9] % 2 == 0){
-                $kj = '双';
-                $re3 = 1;
-            }else{
-                $kj = '单';
-                $re3 = 0;
-            }
-            $data = array(
-                'num' => $re1['data'][0]['expect'],
-                'content' => $re1['data'][0]['opencode'],
-                'yc' => '双',
-                'is_win' => $re3,
-                'kj' => $kj
-            );
-            Db::name('lottery_test1')->insert($data);
-//            if($re3 ==  1){
-//                $yc = '龙';
-//            }else{
-//                $yc = '虎';
-//            }
-            $r = $re2[5] + $re2[6] + $re2[7] + $re2[8];
-            if($r % 2 == 0){
-                $yc = '双';
-            }else{
-                $yc = '单';
-            }
-            $data1 = array(
-                'num' => $re1['data'][0]['expect'] + 1,
-                'yc' => $yc
-            );
-            Db::name('lottery_test1')->insert($data1);
-        }else{
-            if($re1['data'][0]['expect'] >= $list[0]['num']){
-                $re2 = explode(',',$re1['data'][0]['opencode']);
-//                if($re2[0] > $re2[9]){
-//                    $kj = '龙';
-//                    if($list[0]['yc'] == '龙'){
-//                        $re3 = 1;
-//                    }else{
-//                        $re3 = 0;
-//                    }
-//                }else{
-//                    $kj = '虎';
-//                    if($list[0]['yc'] == '虎'){
-//                        $re3 = 1;
-//                    }else{
-//                        $re3 = 0;
-//                    }
-//                }
-                if($re2[9] % 2 == 0){
-                    $kj = '双';
-                    if($list[0]['yc'] == '双'){
-                        $re3 = 1;
-                    }else{
-                        $re3 = 0;
-                    }
-                }else{
-                    $kj = '单';
-                    if($list[0]['yc'] == '单'){
-                        $re3 = 1;
-                    }else{
-                        $re3 = 0;
-                    }
-                }
-                $data = array(
-                    'num' => $re1['data'][0]['expect'],
-                    'content' => $re1['data'][0]['opencode'],
-                    'is_win' => $re3,
-                    'kj' => $kj
-                );
-                Db::name('lottery_test1')->where(['id'=>$list[0]['id']])->update($data);
-//                if(count($list) > 2){
-//                    if($list[1]['kj'] == $kj){
-//                        $yc = $list[0]['yc'];
-//                    }elseif($list[1]['kj'] != $kj && $list[1]['kj'] == $list[2]['kj']){
-//                        $yc = $kj;
-//                    }else{
-//                        $yc = $list[1]['kj'];
-//                    }
-//                }else{
-//                    $yc = $kj;
-//                }
-                $r = $re2[5] + $re2[6] + $re2[7] + $re2[8];
-                if($r % 2 == 0){
-                    $yc = '双';
-                }else{
-                    $yc = '单';
-                }
-                $data1 = array(
-                    'num' => $re1['data'][0]['expect'] + 1,
-                    'yc' => $yc
-                );
-                Db::name('lottery_test1')->insert($data1);
-            }
-        }
-    }
-
 
     /**
      * 幸运28
@@ -670,32 +484,221 @@ class Data extends Controller
         }
     }
 
-
-
-    //浙江11选五
-    protected function I15_zj(){
-        $re = file_get_contents('https://www.zjlottery.com/zsfx2/?flag=Z');
-        var_dump($re);exit;
-//        $r1 ='/<td align="center" bgcolor="#fff6c2" class="red2">(.*?)<\/td>/ism';//取开奖号码
-//        $r2 ='/<td align="center" bgcolor="#fff6c2">(.*?)<\/td>/ism';//取期数
-//        preg_match_all($r1, $re,$da1);
-//        preg_match_all($r2, $re,$da2);
-//        $da1 = $da1[1][0];
-//        $da2 = $da2[1][0];
-//        if ($da1) {
-//            $list =  Db::name('data')->field('expect')->where(['uid' => 5])->order('id desc')->find();
-//            if(empty($list) || $list['expect'] != $da2){
-//                $data = array(
-//                    'uid' => 5,
-//                    'expect' => $da2,
-//                    'opencode' => $da1,
-//                    'opentime' => time()
-//                );
-//                $r = Db::name('data')->insert($data);
-//            }
-//        }
+    /**
+     * 黑龙江 11 选五
+     * @author HomeGrace
+     */
+    protected function I15_hl()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/hlj11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 13])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 13,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_hl:ok<br/>';
+                    } else {
+                        echo 'I15_hl:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_hl:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_hl↑<br/>';
+        }
     }
 
+    /**
+     * 河北 11 选五
+     * @author HomeGrace
+     */
+    protected function I15_hb()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/heb11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 14])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 14,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_hb:ok<br/>';
+                    } else {
+                        echo 'I15_hb:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_hb:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_hb↑<br/>';
+        }
+    }
+
+    /**
+     * 贵州 11 选五
+     * @author HomeGrace
+     */
+    protected function I15_gz()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/gz11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 15])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 15,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_gz:ok<br/>';
+                    } else {
+                        echo 'I15_gz:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_gz:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_gz↑<br/>';
+        }
+    }
+
+    /**
+     * 甘肃 11 选五
+     * @author HomeGrace
+     */
+    protected function I15_gs()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/gs11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 16])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 16,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_gs:ok<br/>';
+                    } else {
+                        echo 'I15_gs:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_gs:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_gs↑<br/>';
+        }
+    }
+
+    /**
+     * 福建 11 选五
+     * @author HomeGrace
+     */
+    protected function I15_fj()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/fj11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 17])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 17,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_fj:ok<br/>';
+                    } else {
+                        echo 'I15_fj:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_fj:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_fj↑<br/>';
+        }
+    }
+
+    /**
+     * 山西 11 选五
+     * @author HomeGrace
+     */
+    protected function I15_sx()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/sx11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 18])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 18,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_sx:ok<br/>';
+                    } else {
+                        echo 'I15_sx:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_sx:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_sx↑<br/>';
+        }
+    }
 
 
 }
