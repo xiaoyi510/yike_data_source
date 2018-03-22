@@ -22,47 +22,4 @@ class Datalist extends Controller
         );
         echo json_encode($data);
     }
-
-    public function test(){
-        $list =  Db::name('lottery_test')->order('id desc')->limit(100)->select();
-        $cuo = 0;
-        $dui = 0;
-        foreach($list as $k => $v){
-            if($k == 0){
-                echo '<div>期号：'.$v['num'].' 预测：'.$v['yc'].' <span>?</span></div>';
-            }else{
-                echo '<div>期号：'.$v['num'].' 预测：'.$v['yc'].' <span ';
-                if($v['is_win'] == 0){
-                    $cuo ++;
-                    echo 'style="color: red;">错</span>';
-                }else{
-                    $dui ++;
-                    echo 'style="color: green;">对</span>';
-                }
-                echo '</div>';
-            }
-        }
-        echo '<div>正确：'.$dui.' 错：'.$cuo.' 正确率：'.($dui/($dui + $cuo) * 100).'%</div>';
-    }
-    public function test1(){
-        $list =  Db::name('lottery_test1')->order('id desc')->limit(100)->select();
-        $cuo = 0;
-        $dui = 0;
-        foreach($list as $k => $v){
-            if($k == 0){
-                echo '<div>期号：'.$v['num'].' 预测：'.$v['yc'].' <span>?</span></div>';
-            }else{
-                echo '<div>期号：'.$v['num'].' 预测：'.$v['yc'].' <span ';
-                if($v['is_win'] == 0){
-                    $cuo ++;
-                    echo 'style="color: red;">错</span>';
-                }else{
-                    $dui ++;
-                    echo 'style="color: green;">对</span>';
-                }
-                echo '</div>';
-            }
-        }
-        echo '<div>正确：'.$dui.' 错：'.$cuo.' 正确率：'.($dui/($dui + $cuo) * 100).'%</div>';
-    }
 }
