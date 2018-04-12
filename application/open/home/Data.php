@@ -96,26 +96,30 @@ class Data extends Controller
 
     //广东11选五
     private function I15_gd(){
-        $re = file_get_contents('http://www.gdlottery.cn/odata/zst11xuan5.jspx');
-        $r1 ='/<span style="width:140px">.*?<strong>(.*?)<\/strong><\/span>/ism';//取开奖号码
-        $r2 ='/<td height="20" align="center" bgcolor="#FFFFFF">(.*?)<\/td>/ism';//取期数
-        preg_match_all($r1, $re,$da1);
-        preg_match_all($r2, $re,$da2);
-        $da1 = trim(end($da1[1]));
-        $da2 = trim(end($da2[1]));
-        $da1 = explode('，',$da1);
-        $da1 = implode(',', $da1);
-        if ($da1) {
-            $list =  Db::name('data')->field('expect')->where(['uid' => 3])->order('id desc')->find();
-            if(empty($list) || $list['expect'] != $da2){
-                $data = array(
-                    'uid' => 3,
-                    'expect' => $da2,
-                    'opencode' => $da1,
-                    'opentime' => time()
-                );
-                $r = Db::name('data')->insert($data);
+        try {
+            $re = file_get_contents('http://www.gdlottery.cn/odata/zst11xuan5.jspx');
+            $r1 ='/<span style="width:140px">.*?<strong>(.*?)<\/strong><\/span>/ism';//取开奖号码
+            $r2 ='/<td height="20" align="center" bgcolor="#FFFFFF">(.*?)<\/td>/ism';//取期数
+            preg_match_all($r1, $re,$da1);
+            preg_match_all($r2, $re,$da2);
+            $da1 = trim(end($da1[1]));
+            $da2 = trim(end($da2[1]));
+            $da1 = explode('，',$da1);
+            $da1 = implode(',', $da1);
+            if ($da1) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 3])->order('id desc')->find();
+                if(empty($list) || $list['expect'] != $da2){
+                    $data = array(
+                        'uid' => 3,
+                        'expect' => $da2,
+                        'opencode' => $da1,
+                        'opentime' => time()
+                    );
+                    $r = Db::name('data')->insert($data);
+                }
             }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_gd↑<br/>';
         }
     }
 
@@ -173,22 +177,26 @@ class Data extends Controller
 
     //山东11选五
     private function I15_sd(){
-        $re = file_get_contents('https://pgkai.com/index.php?c=api2&a=getOthers&_=0.8742121351843366');
-        $re = json_decode($re, true);
-        $da1 = $re['list'][14]['c_r'];
-        $da2 = $re['list'][14]['c_t'];
-        $da3 = strtotime($re['list'][14]['c_d']);
-        if ($da1) {
-            $list =  Db::name('data')->field('expect')->where(['uid' => 6])->order('id desc')->find();
-            if(empty($list) || $list['expect'] != $da2){
-                $data = array(
-                    'uid' => 6,
-                    'expect' => $da2,
-                    'opencode' => $da1,
-                    'opentime' => $da3
-                );
-                $r = Db::name('data')->insert($data);
+        try {
+            $re = file_get_contents('https://pgkai.com/index.php?c=api2&a=getOthers&_=0.8742121351843366');
+            $re = json_decode($re, true);
+            $da1 = $re['list'][14]['c_r'];
+            $da2 = $re['list'][14]['c_t'];
+            $da3 = strtotime($re['list'][14]['c_d']);
+            if ($da1) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 6])->order('id desc')->find();
+                if(empty($list) || $list['expect'] != $da2){
+                    $data = array(
+                        'uid' => 6,
+                        'expect' => $da2,
+                        'opencode' => $da1,
+                        'opentime' => $da3
+                    );
+                    $r = Db::name('data')->insert($data);
+                }
             }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_sd↑<br/>';
         }
     }
 

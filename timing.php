@@ -38,8 +38,13 @@ $task = new Worker();
 $task->count = 1;
 $task->onWorkerStart = function($task)
 {
-    Timer::add(10, 'data', array());
-    Timer::add(10, 'data1', array());
+//    Timer::add(10, 'data', array());
+//    Timer::add(10, 'data1', array());
+    Timer::add(5, function () {
+        $url = 'http://yike_data_source.net/index.php/open/data/msPk10';
+        file_get_contents($url);
+        echo date('Y-m-d H:i:s')."\n";
+    }, array());
 };
 
 // 运行worker
