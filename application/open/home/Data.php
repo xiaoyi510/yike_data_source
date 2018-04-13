@@ -31,6 +31,8 @@ class Data extends Controller
         $this->I15_gs();
         $this->I15_fj();
         $this->I15_sx();
+        $this->I15_ah();
+        $this->I15_js();
         echo 4;
         // 定时删除两天以前的数据
         if (strtotime(date('Y-m-d').'3:0:0') > time() && time() < strtotime(date('Y-m-d').'3:1:0')) {
@@ -116,7 +118,16 @@ class Data extends Controller
                         'opentime' => time()
                     );
                     $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_gd:ok<br/>';
+                    } else {
+                        echo 'I15_gd:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_gd:Yes<br/>';
                 }
+            } else {
+                throw new Exception('I15_gd:NO, Code');
             }
         } catch (\Exception $e) {
             echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_gd↑<br/>';
@@ -124,7 +135,7 @@ class Data extends Controller
     }
 
     //江西11选五
-    public function I15_jx(){
+    private function I15_jx(){
         $re = file_get_contents('http://www.jxlottery.cn/dlc.php');
         $r1 ='/<table border="0" align="center" cellpadding="0" cellspacing="0">.*?<tr>(.*?)<\/tr>.*?<\/table>/ism';//取开奖号码
         $r11 = '/<td class="kj_hm">(.*?)<\/td>/ism';
@@ -152,7 +163,7 @@ class Data extends Controller
     }
 
     //上海11选五
-    public function I15_sh(){
+    private function I15_sh(){
         $re = file_get_contents('http://caipiao.gooooal.com/shtc!bc115.action?ln=2018013018');
 
         $r1 ='/<td align="center" bgcolor="#fff6c2" class="red2">(.*?)<\/td>/ism';//取开奖号码
@@ -175,30 +186,336 @@ class Data extends Controller
         }
     }
 
-    //山东11选五
-    private function I15_sd(){
+    /**
+     * 山东11选五
+     * @author HomeGrace
+     * 时间 2018年4月13日
+     */
+    private function I15_sd()
+    {
         try {
-            $re = file_get_contents('https://pgkai.com/index.php?c=api2&a=getOthers&_=0.8742121351843366');
-            $re = json_decode($re, true);
-            $da1 = $re['list'][14]['c_r'];
-            $da2 = $re['list'][14]['c_t'];
-            $da3 = strtotime($re['list'][14]['c_d']);
-            if ($da1) {
+            $re = $this->curl("http://www.cpbao.com/sdel11to5/scheme!getServicerTime.action", []);
+            $re = json_decode($re);
+            $re = $re->resultList[0];
+            if ($re) {
                 $list =  Db::name('data')->field('expect')->where(['uid' => 6])->order('id desc')->find();
-                if(empty($list) || $list['expect'] != $da2){
+                if(empty($list) || $list['expect'] != $re->periodNumber){
                     $data = array(
-                        'uid' => 6,
-                        'expect' => $da2,
-                        'opencode' => $da1,
-                        'opentime' => $da3
+                        'uid'      => 6,
+                        'expect'   => $re->periodNumber,
+                        'opencode' => $re->result,
+                        'opentime' => strtotime($re->prizeTime)
                     );
                     $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_sd:ok<br/>';
+                    } else {
+                        echo 'I15_sd:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_sd:Yes<br/>';
                 }
+            } else {
+                throw new Exception('I15_sd:NO, Code');
             }
         } catch (\Exception $e) {
             echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_sd↑<br/>';
         }
     }
+
+    /**
+     * 黑龙江 11 选五
+     * @author HomeGrace
+     */
+    private function I15_hl()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/hlj11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 13])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 13,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_hl:ok<br/>';
+                    } else {
+                        echo 'I15_hl:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_hl:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_hl↑<br/>';
+        }
+    }
+
+    /**
+     * 河北 11 选五
+     * @author HomeGrace
+     */
+    private function I15_hb()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/heb11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 14])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 14,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_hb:ok<br/>';
+                    } else {
+                        echo 'I15_hb:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_hb:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_hb↑<br/>';
+        }
+    }
+
+    /**
+     * 贵州 11 选五
+     * @author HomeGrace
+     */
+    private function I15_gz()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/gz11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 15])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 15,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_gz:ok<br/>';
+                    } else {
+                        echo 'I15_gz:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_gz:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_gz↑<br/>';
+        }
+    }
+
+    /**
+     * 甘肃 11 选五
+     * @author HomeGrace
+     */
+    private function I15_gs()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/gs11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 16])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 16,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_gs:ok<br/>';
+                    } else {
+                        echo 'I15_gs:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_gs:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_gs↑<br/>';
+        }
+    }
+
+    /**
+     * 福建 11 选五
+     * @author HomeGrace
+     */
+    private function I15_fj()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/fj11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 17])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 17,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_fj:ok<br/>';
+                    } else {
+                        echo 'I15_fj:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_fj:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_fj↑<br/>';
+        }
+    }
+
+    /**
+     * 山西 11 选五
+     * @author HomeGrace
+     */
+    private function I15_sx()
+    {
+        try {
+            $re = file_get_contents('http://pub.icaile.com/sx11x5kjjg.php');
+            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
+            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
+            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
+            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
+            if (!empty($a3[1])) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 18])->order('id desc')->find();
+                if (empty($list) || $list['expect'] != $a[1]) {
+                    $data = [
+                        'uid'      => 18,
+                        'expect'   => $a[1],
+                        'opencode' => join(',', $a3[1]),
+                        'opentime' => strtotime($a1[1]),
+                    ];
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_sx:ok<br/>';
+                    } else {
+                        echo 'I15_sx:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_sx:Yes<br/>';
+                }
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_sx↑<br/>';
+        }
+    }
+
+    /**
+     * 安徽 11 选五
+     * @author HomeGrace
+     * 时间 2018 年 4 月 13 日
+     */
+    private function I15_ah()
+    {
+        try {
+            $re = $this->curl('https://api.api68.com/ElevenFive/getElevenFiveInfo.do?lotCode=10017', []);
+            $re = json_decode($re);
+            $re = $re->result->data;
+            if ($re) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 19])->order('id desc')->find();
+                if(empty($list) || $list['expect'] != $re->preDrawIssue){
+                    $data = array(
+                        'uid'      => 19,
+                        'expect'   => $re->preDrawIssue,
+                        'opencode' => $re->preDrawCode,
+                        'opentime' => strtotime($re->preDrawTime)
+                    );
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_ah:ok<br/>';
+                    } else {
+                        echo 'I15_ah:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_ah:Yes<br/>';
+                }
+            } else {
+                throw new \Exception('I15_ah:NO, Code');
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_ah↑<br/>';
+        }
+    }
+
+    /**
+     * 江苏 11 选五
+     * @author HomeGrace
+     * 时间 2018 年 4 月 13 日
+     */
+    private function I15_js()
+    {
+        try {
+            $re = $this->curl('https://api.api68.com/ElevenFive/getElevenFiveInfo.do?lotCode=10015', []);
+            $re = json_decode($re);
+            $re = $re->result->data;
+            if ($re) {
+                $list =  Db::name('data')->field('expect')->where(['uid' => 20])->order('id desc')->find();
+                if(empty($list) || $list['expect'] != $re->preDrawIssue){
+                    $data = array(
+                        'uid'      => 20,
+                        'expect'   => $re->preDrawIssue,
+                        'opencode' => $re->preDrawCode,
+                        'opentime' => strtotime($re->preDrawTime)
+                    );
+                    $r = Db::name('data')->insert($data);
+                    if ($r) {
+                        echo 'I15_js:ok<br/>';
+                    } else {
+                        echo 'I15_js:NO<br/>';
+                    }
+                } else {
+                    echo 'I15_js:Yes<br/>';
+                }
+            } else {
+                throw new \Exception('I15_js:NO, Code');
+            }
+        } catch (\Exception $e) {
+            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_js↑<br/>';
+        }
+    }
+
+
+    
+    
 
     /**
      * 幸运28
@@ -492,221 +809,50 @@ class Data extends Controller
         }
     }
 
-    /**
-     * 黑龙江 11 选五
-     * @author HomeGrace
-     */
-    protected function I15_hl()
-    {
-        try {
-            $re = file_get_contents('http://pub.icaile.com/hlj11x5kjjg.php');
-            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
-            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
-            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
-            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
-            if (!empty($a3[1])) {
-                $list =  Db::name('data')->field('expect')->where(['uid' => 13])->order('id desc')->find();
-                if (empty($list) || $list['expect'] != $a[1]) {
-                    $data = [
-                        'uid'      => 13,
-                        'expect'   => $a[1],
-                        'opencode' => join(',', $a3[1]),
-                        'opentime' => strtotime($a1[1]),
-                    ];
-                    $r = Db::name('data')->insert($data);
-                    if ($r) {
-                        echo 'I15_hl:ok<br/>';
-                    } else {
-                        echo 'I15_hl:NO<br/>';
-                    }
-                } else {
-                    echo 'I15_hl:Yes<br/>';
-                }
-            }
-        } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_hl↑<br/>';
-        }
-    }
+
+
+
+
+    
+    
+    
+    
+
+    
 
     /**
-     * 河北 11 选五
-     * @author HomeGrace
+     * 抓取数据  https 或 http 形式
+     * @param $url    链接
+     * @param $data   参数
+     * @return mixed  返回数据
      */
-    protected function I15_hb()
+    private function curl($url, $data)
     {
-        try {
-            $re = file_get_contents('http://pub.icaile.com/heb11x5kjjg.php');
-            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
-            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
-            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
-            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
-            if (!empty($a3[1])) {
-                $list =  Db::name('data')->field('expect')->where(['uid' => 14])->order('id desc')->find();
-                if (empty($list) || $list['expect'] != $a[1]) {
-                    $data = [
-                        'uid'      => 14,
-                        'expect'   => $a[1],
-                        'opencode' => join(',', $a3[1]),
-                        'opentime' => strtotime($a1[1]),
-                    ];
-                    $r = Db::name('data')->insert($data);
-                    if ($r) {
-                        echo 'I15_hb:ok<br/>';
-                    } else {
-                        echo 'I15_hb:NO<br/>';
-                    }
-                } else {
-                    echo 'I15_hb:Yes<br/>';
-                }
-            }
-        } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_hb↑<br/>';
+        set_time_limit(0);
+        $UserAgent = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1; .NET CLR 2.0.50727; .NET CLR 3.0.04506; .NET CLR 3.5.21022; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
+        $curl = curl_init(); // 启动一个CURL会话
+        curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // 从证书中检查SSL加密算法是否存在
+        curl_setopt($curl, CURLOPT_USERAGENT, $UserAgent/*$_SERVER['HTTP_USER_AGENT']*/); // 模拟用户使用的浏览器
+
+        if (ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) {
+
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+
         }
-    }
-
-    /**
-     * 贵州 11 选五
-     * @author HomeGrace
-     */
-    protected function I15_gz()
-    {
-        try {
-            $re = file_get_contents('http://pub.icaile.com/gz11x5kjjg.php');
-            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
-            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
-            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
-            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
-            if (!empty($a3[1])) {
-                $list =  Db::name('data')->field('expect')->where(['uid' => 15])->order('id desc')->find();
-                if (empty($list) || $list['expect'] != $a[1]) {
-                    $data = [
-                        'uid'      => 15,
-                        'expect'   => $a[1],
-                        'opencode' => join(',', $a3[1]),
-                        'opentime' => strtotime($a1[1]),
-                    ];
-                    $r = Db::name('data')->insert($data);
-                    if ($r) {
-                        echo 'I15_gz:ok<br/>';
-                    } else {
-                        echo 'I15_gz:NO<br/>';
-                    }
-                } else {
-                    echo 'I15_gz:Yes<br/>';
-                }
-            }
-        } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_gz↑<br/>';
+        //curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
+        curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
+        curl_setopt($curl, CURLOPT_POST, 1); // 发送一个常规的Post请求
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data); // Post提交的数据包
+        curl_setopt($curl, CURLOPT_TIMEOUT, 200); // 设置超时限制防止死循环
+        curl_setopt($curl, CURLOPT_HEADER, 0); // 显示返回的Header区域内容
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 获取的信息以文件流的形式返回
+        $tmpInfo = curl_exec($curl); // 执行操作
+        if (curl_errno($curl)) {
+            echo 'Errno'.curl_error($curl);//捕抓异常
         }
+        curl_close($curl); // 关闭CURL会话
+        return $tmpInfo; // 返回数据
     }
-
-    /**
-     * 甘肃 11 选五
-     * @author HomeGrace
-     */
-    protected function I15_gs()
-    {
-        try {
-            $re = file_get_contents('http://pub.icaile.com/gs11x5kjjg.php');
-            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
-            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
-            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
-            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
-            if (!empty($a3[1])) {
-                $list =  Db::name('data')->field('expect')->where(['uid' => 16])->order('id desc')->find();
-                if (empty($list) || $list['expect'] != $a[1]) {
-                    $data = [
-                        'uid'      => 16,
-                        'expect'   => $a[1],
-                        'opencode' => join(',', $a3[1]),
-                        'opentime' => strtotime($a1[1]),
-                    ];
-                    $r = Db::name('data')->insert($data);
-                    if ($r) {
-                        echo 'I15_gs:ok<br/>';
-                    } else {
-                        echo 'I15_gs:NO<br/>';
-                    }
-                } else {
-                    echo 'I15_gs:Yes<br/>';
-                }
-            }
-        } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_gs↑<br/>';
-        }
-    }
-
-    /**
-     * 福建 11 选五
-     * @author HomeGrace
-     */
-    protected function I15_fj()
-    {
-        try {
-            $re = file_get_contents('http://pub.icaile.com/fj11x5kjjg.php');
-            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
-            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
-            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
-            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
-            if (!empty($a3[1])) {
-                $list =  Db::name('data')->field('expect')->where(['uid' => 17])->order('id desc')->find();
-                if (empty($list) || $list['expect'] != $a[1]) {
-                    $data = [
-                        'uid'      => 17,
-                        'expect'   => $a[1],
-                        'opencode' => join(',', $a3[1]),
-                        'opentime' => strtotime($a1[1]),
-                    ];
-                    $r = Db::name('data')->insert($data);
-                    if ($r) {
-                        echo 'I15_fj:ok<br/>';
-                    } else {
-                        echo 'I15_fj:NO<br/>';
-                    }
-                } else {
-                    echo 'I15_fj:Yes<br/>';
-                }
-            }
-        } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_fj↑<br/>';
-        }
-    }
-
-    /**
-     * 山西 11 选五
-     * @author HomeGrace
-     */
-    protected function I15_sx()
-    {
-        try {
-            $re = file_get_contents('http://pub.icaile.com/sx11x5kjjg.php');
-            preg_match('/<td class="nth-child-1">(.*?)<\/td>/ims', $re, $a);
-            preg_match('/<td class="nth-child-2">(.*?)<\/td>/ims', $re, $a1);
-            preg_match('/<td class="nth-child-3">(.*?)<\/td>/ims', $re, $a2);
-            preg_match_all('/<em.*?>(.*?)<\/em>/', $a2[1], $a3);
-            if (!empty($a3[1])) {
-                $list =  Db::name('data')->field('expect')->where(['uid' => 18])->order('id desc')->find();
-                if (empty($list) || $list['expect'] != $a[1]) {
-                    $data = [
-                        'uid'      => 18,
-                        'expect'   => $a[1],
-                        'opencode' => join(',', $a3[1]),
-                        'opentime' => strtotime($a1[1]),
-                    ];
-                    $r = Db::name('data')->insert($data);
-                    if ($r) {
-                        echo 'I15_sx:ok<br/>';
-                    } else {
-                        echo 'I15_sx:NO<br/>';
-                    }
-                } else {
-                    echo 'I15_sx:Yes<br/>';
-                }
-            }
-        } catch (\Exception $e) {
-            echo $e->getFile().':'.$e->getLine().':'.$e->getMessage().'<br/>所有数据都挂了:I15_sx↑<br/>';
-        }
-    }
-
-
 }
